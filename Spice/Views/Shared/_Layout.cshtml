@@ -72,6 +72,10 @@
                                     {
                                         <li> <a class="dropdown-item" asp-action="OrderPickup" asp-controller="Orders" asp-area="Customer">PickUp Order</a></li>
                                     }
+                                     @if (User.IsInRole(SD.ManagerUser))
+                                    {
+                                        <li> <a class="dropdown-item" asp-action="Orders" asp-controller="Orders" asp-area="Customer">All Orders</a></li>
+                                    }
                                 </ul>
 
                             </li>
@@ -85,16 +89,7 @@
                                     Orders History
                                 </a>
                             </li>
-                        }
-                        @if (User.IsInRole(SD.KitchenUser) || User.IsInRole(SD.ManagerUser))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-white-50" asp-area="Customer" asp-action="ManageOrder" asp-controller="Orders">
-                                    Manage Orders
-                                </a>
-                            </li>
-                        }
-
+                        }                    
 
                         @if (HttpContextAccessor.HttpContext.Session.GetInt32(@SD.ssShoppingCartCount) != null)
                         {

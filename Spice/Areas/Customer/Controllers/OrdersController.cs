@@ -23,6 +23,32 @@ namespace Spice.Areas.Customer.Controllers
             _emailSender = emailSender;
         }
 
+
+
+        public async Task<IActionResult> Orders()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            List<OrderDetailsViewModel> orderDetailsVMList = new List<OrderDetailsViewModel>();
+
+            List<OrderHeader> orderHeadersList = await _db.OrderHeaders.Include(x => x.ApplicationUser).ToListAsync();
+
+            foreach (var orderHeader in orderHeadersList)
+            {
+                OrderDetailsViewModel orderDetailsVM = new OrderDetailsViewModel()
+                {
+                    OrderHeader = orderHeader,
+                    OrderDetails = _db.OrderDetails.Where(x => x.OrderId == orderHeader.Id).ToList()
+                };
+
+                orderDetailsVMList.Add(orderDetailsVM);
+            }
+
+            return View(orderDetailsVMList);
+        }
+
+
         public async Task<IActionResult> Confirm(int id)
         {
             var claimsIdentity= (ClaimsIdentity)User.Identity;
@@ -183,8 +209,6 @@ namespace Spice.Areas.Customer.Controllers
             OrderHeader orderHeader = await _db.OrderHeaders.FindAsync(OrderId);
             orderHeader.Status = SD.StatusCompleted;
             await _db.SaveChangesAsync();
-            //await _emailSender.SendEmailAsync(_db.Users.Where(u => u.Id == orderHeader.UserId).FirstOrDefault().Email, "Spice - Order Completed " + orderHeader.Id.ToString(), "Order has been completed successfully.");
-
             return RedirectToAction("OrderPickup", "Orders");
         }
 

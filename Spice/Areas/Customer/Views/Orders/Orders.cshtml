@@ -1,0 +1,121 @@
+﻿@model IEnumerable<OrderDetailsViewModel>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+
+<div class="container">
+    <h2>Orders</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(m => m.OrderHeader.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.OrderHeader.PickUpName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.OrderHeader.ApplicationUser.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.OrderHeader.OrderDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.OrderHeader.OrderTotalOriginal)
+                </th>
+                <th>
+                    Total Items
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => item.OrderHeader.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.OrderHeader.PickUpName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.OrderHeader.ApplicationUser.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.OrderHeader.OrderDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.OrderHeader.OrderTotalOriginal)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.OrderDetails.Count)
+                    </td>
+                    <td>
+                        <button type="submit" class="btn btn-success showDetails" data-bs-target="Modal" data-id="@item.OrderHeader.Id" data-bs-toggle="modal">
+                            <i class="fa fa-list-alt"></i> Details
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog-centered modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header bg-success text-light justify-content-center">
+                <h5 class="modal-title">Order Details</h5>
+            </div>
+
+
+
+            <div class="modal-body justify-content-center" id="myModalContent">
+            </div>
+
+
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" style="width:20%" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        var PostBackURL = '/Customer/Orders/GetOrderDetails';
+
+        $(function () {
+            $(".showDetails").click(function () {
+                var $buttonClicked = $(this);
+                var id = $buttonClicked.attr('data-id');
+
+                $.ajax({
+                    type: "GET",
+                    url: PostBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data: { "Id": id },
+                    cache: false,
+                    datatype: "json",
+                    success: function (data) {
+                        $('#myModalContent').html(data);
+                        $('#myModal').modal('show');
+                    },
+                    error: function () {
+                        alert("Dynamic content load failed");
+                    }
+                })
+            })
+        })
+
+    </script>
+}

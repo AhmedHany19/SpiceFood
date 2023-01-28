@@ -5,22 +5,32 @@
 @if (Model.Coupons.ToList().Count > 0)
 {
     <div class="border row">
-        <div class="carousel" data-ride="carousel" data-interval="1000">
+        <div class="carousel slide" data-ride="carousel" data-interval="3000">
             @for (int i = 0; i < Model.Coupons.Count(); i++)
             {
                 if (i == 0)
                 {
                     <div class="carousel-item active ">
                         @{
+                            if (Model.Coupons.ToList()[i].Picture==null)
+                            {
+                                <img src="" height="50px" class="d-block w-100" />
+
+                            }
+                            else
+                            {
                             var base64 = Convert.ToBase64String(Model.Coupons.ToList()[i].Picture);
                             var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                             <img src="@imgsrc" height="50px" class="d-block w-100" />
+
+                            }
+                            
                         }
-                        <img src="@imgsrc" height="50px" class="d-block w-100" />
                     </div>
                 }
                 else
                 {
-                    <div class="carousel-item ">
+                    <div class="carousel-item">
                         @{
                             var base64 = Convert.ToBase64String(Model.Coupons.ToList()[i].Picture);
                             var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
@@ -60,6 +70,7 @@
         crossorigin="anonymous">
 </script>
 <script>
+       
     var posts = $('.post');
 
     (function ($) {
